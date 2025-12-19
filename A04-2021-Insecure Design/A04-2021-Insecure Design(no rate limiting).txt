@@ -1,0 +1,75 @@
+OWASP Top 10 2021
+=================
+ID: A04:2021
+Vulnerability: Insecure Design
+meaning: The app is badly designed from the start, even if code is “clean”.(No rate limiting)
+================================================================================================================================================================
+Phae1 --> http://localhost:5000/v1/search/id/2         (run this multiple times on postman ,this means there are no rate limiting)
+================================================================================================================================================================
+File: order.js
+Route: /v1/search/:filter/:query
+
+vulnerable code:
+app.get('/v1/search/:filter/:query', (req,res) =>{
+    const filter = req.params.filter
+    const query = req.params.query
+    const sql = "SELECT * FROM beers WHERE "+filter+" = '"+query+"'";
+    const beers = db.sequelize.query(sql, { type: 'RAW' }).then(beers => {
+          res.status(200).send(beers);
+    }).catch(function (err) {
+          res.status(501).send("error, query failed: "+err)
+    })
+});
+
+------------------------------------------------------------------------------------
+exploitation:
+for i in {1..1000}; do curl -s "http://localhost:5000/v1/search/id/$i" & done
+
+------------------------------------------------------------------------------------
+explanation:
+The /v1/search endpoint has no rate limiting. This missing architecture allows attackers to overwhelm the server and database by sending thousands of rapid requests.
+An attacker can execute a DoS attack by spawning many concurrent queries, exhausting database connections, or scrape all data by systematically querying every possible ID without restriction.
+
+------------------------------------------------------------------------------------
+rules:
+Static rules cannot detect a missing security control like rate limiting. A04 vulnerabilities are gaps in the design,
+not bugs in the code, making them invisible to tools that scan for specific bad patterns.
+
+================================================================================================================================================================
+fix:
+instead of:
+
+app.get('/v1/search/:filter/:query', (req,res) =>{
+    const filter = req.params.filter
+    const query = req.params.query
+    const sql = "SELECT * FROM beers WHERE "+filter+" = '"+query+"'";
+    const beers = db.sequelize.query(sql, { type: 'RAW' }).then(beers => {
+          res.status(200).send(beers);
+    }).catch(function (err) {
+          res.status(501).send("error, query failed: "+err)
+    })
+});
+
+use:
+
+const rateLimit = require('express-rate-limit');
+const searchLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, 
+  max: 10, 
+  message: { error: 'Too many search requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.get('/v1/search/:filter/:query', searchLimiter, (req,res) =>{
+    const filter = req.params.filter
+    const query = req.params.query
+    const sql = "SELECT * FROM beers WHERE "+filter+" = '"+query+"'";
+    const beers = db.sequelize.query(sql, { type: 'RAW' }).then(beers => {
+          res.status(200).send(beers);
+    }).catch(function (err) {
+          res.status(501).send("error, query failed: "+err)
+    })
+});
+
+================================================================================================================================================================

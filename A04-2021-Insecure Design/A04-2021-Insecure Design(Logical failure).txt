@@ -1,0 +1,45 @@
+OWASP Top 10 2021
+=================
+ID: A04:2021
+Vulnerability: Insecure Design
+meaning: The app is badly designed from the start, even if code is “clean”.(Logic flaws in this example)
+================================================================================================================================================================
+File: router/routes/frontend.js
+Route: '/login' and '/registerform'
+
+vulnerable code:
+if((user[0].password == userPassword) || (md5(user[0].password) == userPassword)){
+	...
+}
+
+------------------------------------------------------------------------------------
+exploitation:
+you can use the hash of the password to login
+
+------------------------------------------------------------------------------------
+explanation:
+The authentication endpoint contains a critical logic flaw that completely breaks legitimate user access. The condition:
+ 		if((user[0].password == userPassword) || (md5(user[0].password) == userPassword))
+is designed to accept either a plaintext password or its MD5 hash, but because passwords are stored as MD5 hashes, the logic becomes impossible to satisfy. The first condition compares a stored hash (like 21232f297a57a5a743894a0e4a801fc3) with a plaintext user input (like admin), which is always false. The second condition makes the error worse by hashing the already-stored hash and comparing that to the plaintext input, creating a comparison like md5("21232f297a57a5a743894a0e4a801fc3") == "admin", which is also always false. This flawed design not only prevents all valid logins through this endpoint, rendering it useless for users, but also represents a fundamental A04:2021-Insecure Design vulnerability where the authentication logic itself is architecturally broken.
+
+------------------------------------------------------------------------------------
+rules: 
+Since this is a logic error in how the code thinks not a specific mistake in how it's written, you can't write a simple semgrep rule to find it.
+These mistakes can be anywhere and look like normal code so they slip right past automated security checks.
+This means you have to carefully review the design and think through the logic yourself
+
+
+
+================================================================================================================================================================
+fix:
+instead of:
+if((user[0].password == userPassword) || (md5(user[0].password) == userPassword)){
+	...
+}
+
+use:
+if (user[0].password === md5(userPassword)) {
+	...
+}
+
+================================================================================================================================================================

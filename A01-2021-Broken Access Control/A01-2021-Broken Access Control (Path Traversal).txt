@@ -1,0 +1,111 @@
+OWASP Top 10 2021
+=================
+ID: A01:2021
+Vulnerability: Broken Access Control
+meaning:Users can access things they should NOT be allowed to access.(Path Traversal)
+================================================================================================================================================================
+Phae1 --> http://localhost:5000/v1/beer-pic/?picture=../../../package.json (use this in postman and you will be able to control the files you get)
+================================================================================================================================================================
+File: order.js
+Route: /v1/beer-pic/
+
+vulnerable code:
+
+app.get('/v1/beer-pic/', (req,res) =>{
+    var filename = req.query.picture,
+    filePath = `../../../uploads/${filename}`;
+    const path=require('path')
+    //console.log(__dirname)
+    //console.log(path.dirname(filePath))
+    //path.normalize(filePath)
+    fs.readFile(path.join(__dirname, filePath),function(err,data){
+    if (err){
+        res.send("error")
+    }else{
+        if(filename.split('.').length == 1){
+           res.type('image/jpeg')
+           //res.set('Content-Type', 'image/jpg');
+           res.send(data)
+           return;
+         }
+     let buffer = Buffer.from(data, 'utf8');
+     res.send(buffer)
+     }             
+   })
+ });
+
+------------------------------------------------------------------------------------
+exploitation:
+http://localhost:5000/v1/beer-pic/?picture=../../../package.json in postman
+------------------------------------------------------------------------------------
+explanation:
+The server's normal behavior is that the http://localhost:5000/v1/beer-pic/?picture={pic} returns the photo of a beer (ex: http://localhost:5000/v1/beer-pic/?picture=bud.jpg) so you can view/download it.
+
+The vulnerability here is that the server trusts users to provide safe filenames, but users can provide malicious paths like ../../../{filename} to read any file on the server! The server directly concatenates user input into a file path without validation: ../../../uploads/${filename}. When filename contains directory traversal sequences (../), it escapes the intended uploads directory.
+
+For example: http://localhost:5000/v1/beer-pic/?picture=../../../package.json becomes ../../../uploads/../../../package.json, which resolves to ../../package.json, allowing reading of the project's package.json file from the server's filesystem.
+
+------------------------------------------------------------------------------------
+rules:
+  - id: any-fs-read-with-user-input
+    message: File read with user input - Path Traversal risk
+    severity: ERROR
+    languages: [javascript]
+    pattern: |
+      fs.readFile($PATH, ...)
+    where:
+      - $PATH.matches(/req\./)
+
+================================================================================================================================================================
+fix:
+instead of:
+app.get('/v1/beer-pic/', (req,res) =>{
+    var filename = req.query.picture,
+    filePath = `../../../uploads/${filename}`;
+    const path=require('path')
+    //console.log(__dirname)
+    //console.log(path.dirname(filePath))
+    //path.normalize(filePath)
+    fs.readFile(path.join(__dirname, filePath),function(err,data){
+    if (err){
+        res.send("error")
+    }else{
+        if(filename.split('.').length == 1){
+           res.type('image/jpeg')
+           //res.set('Content-Type', 'image/jpg');
+           res.send(data)
+           return;
+         }
+     let buffer = Buffer.from(data, 'utf8');
+     res.send(buffer)
+     }             
+   })
+ });
+
+use:
+
+app.get('/v1/beer-pic/', (req,res) =>{
+    const filename = req.query.picture;
+    
+    // Validate input - reject path traversal
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).send("Invalid filename");
+    }
+    
+    // Allow only image files
+    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    const ext = require('path').extname(filename).toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+        return res.status(400).send("Invalid file type");
+    }
+    
+    // Read and send file
+    const filePath = require('path').join(__dirname, '../../../uploads', filename);
+    require('fs').readFile(filePath, function(err, data){
+        if (err) return res.status(404).send("Not found");
+        res.type(ext === '.png' ? 'image/png' : 'image/jpeg').send(data);
+    });
+});
+
+
+================================================================================================================================================================

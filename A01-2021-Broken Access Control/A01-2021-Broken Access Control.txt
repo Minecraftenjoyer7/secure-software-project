@@ -1,0 +1,164 @@
+OWASP Top 10 2021
+=================
+ID: A01:2021
+Vulnerability: Broken Access Control
+Meaning: Users can access things they should NOT be allowed to access.
+================================================================================================================================================================
+File: router/routes/frontend.js
+Route: http://localhost:5000/profile?id={number}
+
+vulnerable code:
+    app.get('/profile', (req,res) =>{
+
+        if(!req.query.id){
+            res.redirect("/?message=Could not Access profile please log in or register")
+            return;
+        }
+        const user = db.user.findAll({include: 
+            'beers',
+            where: {
+                id: req.query.id                     <----------the vulnerability mainly
+            }}).then(user => {
+            if(user.length == 0){
+                res.redirect('/?message=User not found, please log in')
+                return;
+            }
+            let beers = db.beer.findAll().then(beers => {
+            res.render('profile.html',{beers : beers, user:user[0]});
+         })
+    });
+});
+------------------------------------------------------------------------------------
+exploitation:
+you can change in the 
+Route: http://localhost:5000/profile?id=1
+Route: http://localhost:5000/profile?id=2
+Route: http://localhost:5000/profile?id=3
+and still login even if you dont have credentials for those accounts
+------------------------------------------------------------------------------------
+explanation:
+The application exposes user profile access through a client-controlled identifier (id) in the URL, without enforcing proper authorization checks on the server side.
+This allows users to access profiles that do not belong to them simply by modifying the profile ID value in the request.
+------------------------------------------------------------------------------------
+rules:
+  - id: idor-client-controlled-id
+    patterns:
+      - pattern: req.query.id
+    message: "Client-controlled ID(Broken Access Control)"
+    severity: ERROR
+    languages: [javascript]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================================================================================================================================
+fix: 
+instead of:(in frontend.js)
+    app.get('/profile', (req,res) =>{
+
+        if(!req.query.id){
+            res.redirect("/?message=Could not Access profile please log in or register")
+            return;
+        }
+        const user = db.user.findAll({include: // Notice `include` takes an ARRAY
+            'beers',
+            where: {
+                id: req.query.id
+            }}).then(user => {
+            if(user.length == 0){
+                res.redirect('/?message=User not found, please log in')
+                return;
+            }
+            let beers = db.beer.findAll().then(beers => {
+
+                console.log(user)
+                console.log(beers)
+
+            res.render('profile.html',{beers : beers, user:user[0]});
+         })
+    });
+});
+
+------------------------------------------------------------------------------------------------------
+use:
+app.get('/profile', async (req, res) => {
+
+    // ✅ Enforce authentication
+    if (!req.session.logged || !req.session.userId) {
+        return res.redirect('/?message=Please log in');
+    }
+
+    try {
+        // ✅ Server-side identity (NO client control)
+        if (!req.session.logged || !req.session.userId) {
+    		return res.redirect('/?message=Please log in');
+	}
+        const user = await db.user.findOne({
+            //where: { id: req.session.userId },
+             where:{ id: req.session.userId },
+            include: 'beers'
+        });
+
+        if (!user) {
+            return res.redirect('/?message=User not found');
+        }
+
+        // ✅ Fetch beers like before
+        const beers = await db.beer.findAll();
+
+        res.render('profile.html', {
+            user,
+            beers
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
+
+================================================================================================================================================================
+instead of:(in frontend.js)
+if(user[0].password === md5(userPassword)){
+       req.session.logged = true
+       res.redirect('/profile?id='+user[0].id);
+       return;
+}
+
+------------------------------------------------------------------------------------------------------
+use:
+if(user[0].password === md5(userPassword)){
+	req.session.logged = true;	
+	// ✅ FIX: store user identity in session
+	req.session.userId = user[0].id;
+	res.redirect('/profile');
+	return;
+}
+
+================================================================================================================================================================
+

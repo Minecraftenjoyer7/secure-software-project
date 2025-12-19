@@ -1,0 +1,61 @@
+OWASP Top 10 2021
+=================
+ID: A03:2021
+Vulnerability: Injection
+Meaning: User input is treated as code, not data.(XSS in our example)
+================================================================================================================================================================
+Phae1 --> xss vuln was seen in the ZAP scan (4 photos in zap)
+================================================================================================================================================================
+File: frontend.js and auth-login-basic.html
+Route: http://localhost:5000/?message={js code}
+
+vulnerable code:
+   const nunjucks = require('nunjucks')
+   const message = req.query.message || "Please log in to continue"
+   rendered = nunjucks.renderString(message);
+   res.render('user.html',{message : rendered});
+
+
+------------------------------------------------------------------------------------
+exploitation:
+http://localhost:5000/?message=<script>......</script>        <---you could render any js code on you website using this
+
+------------------------------------------------------------------------------------
+explanation:
+The application is vulnerable to both Reflected Cross-Site Scripting (XSS) and Server-Side Template Injection (SSTI). User-controlled input is passed directly to nunjucks.renderString() and rendered without sanitization. This allows attackers to execute arbitrary JavaScript in the browser and arbitrary commands on the server, leading to Remote Code Execution.
+
+------------------------------------------------------------------------------------
+(from https://semgrep.dev/docs/cheat-sheets/express-xss)
+rules:
+  - id: xss-vuln
+    message: "XSS: User input in template without escaping"
+    severity: HIGH
+    languages: [javascript]
+    pattern: 'res.render(..., {message: $INPUT})'
+    where:
+      - $INPUT.matches(/req\.|rendered/)
+
+
+
+
+================================================================================================================================================================
+fix:
+instead of:
+   const nunjucks = require('nunjucks')
+   const message = req.query.message || "Please log in to continue"
+   rendered = nunjucks.renderString(message);
+   res.render('user.html',{message : rendered});
+
+
+use:
+   const message = req.query.message || "Please log in to continue"
+   const escapeHtml = require('escape-html');
+   res.render('user.html',{message: escapeHtml(message)});
+
+------------------------------------------------------------------------------------
+instead of:
+	<p class="mb-4">{{message | safe}}</p>   
+
+use:
+	<p class="mb-4">{{message}}</p>
+================================================================================================================================================================

@@ -1,0 +1,67 @@
+OWASP Top 10 2021
+=================
+ID: A02:2021
+Vulnerability: Cryptographic Failures
+Meaning: Sensitive data is poorly protected or not protected at all.(MD5 hashing in our example)
+================================================================================================================================================================
+File: router/routes/frontend.js
+Route: '/login' and '/registerform'
+
+vulnerable code: 
+const md5 = require('md5');                      <----------the vulnerability mainly
+if (user[0].password === md5(userPassword)) {
+     req.session.logged = true
+     res.redirect('/profile?id='+user[0].id);
+     return;
+}
+
+------------------------------------------------------------------------------------
+exploitation:
+if the database was leaked an attacker could use a common wordlist or rainbow table to crack passwords
+ex:
+21232f297a57a5a743894a0e4a801fc3  
+use (https://crackstation.net/) to crack hash
+------------------------------------------------------------------------------------
+explanation:
+The application suffers from a Cryptographic Failure due to the use of MD5 for password hashing. MD5 is a broken and fast cryptographic hash function unsuitable for password storage. The implementation lacks salting and allows insecure password verification logic, making stored credentials vulnerable to offline attacks. The issue was mitigated by replacing MD5 with bcrypt, which provides adaptive hashing and built-in salting.
+------------------------------------------------------------------------------------
+rules:
+  - id: js-crypto-md5-password
+    patterns:
+      - pattern: md5($X)
+    message: "Insecure cryptographic algorithm detected (MD5)"
+    severity: ERROR
+    languages: [javascript]
+================================================================================================================================================================
+fix:
+instead of:(in frontend.js --> /registerform)
+   const md5 = require('md5')
+   ...
+   password:md5(userPassword)
+use:
+   const bcrypt = require('bcrypt');
+   const hashedPassword = bcrypt.hashSync(userPassword, 10);
+   .....   
+   password: hashedPassword
+
+------------------------------------------------------------------------------------------------------
+
+instead of:(in frontend.js --> /login)
+   const md5 = require('md5')
+   if (user[0].password === md5(userPassword)) {
+         req.session.logged = true
+         res.redirect('/profile?id='+user[0].id);
+         return;
+    }
+use:
+   const bcrypt = require('bcrypt');
+   if (bcrypt.compareSync(userPassword, user[0].password)) {
+         req.session.logged = true
+         res.redirect('/profile?id='+user[0].id);
+         return;
+    }
+            
+================================================================================================================================================================
+example of "admin" with md5 and bcrypt:
+md5:      21232f297a57a5a743894a0e4a801fc3
+becrypt:  $2b$10$O47OeQHJ1SwKhWzsBo46HuLqwDd0F5rImIclEc.PxJxeW6efFdeoO

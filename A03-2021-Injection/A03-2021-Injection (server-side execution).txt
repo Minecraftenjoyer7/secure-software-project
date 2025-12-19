@@ -1,0 +1,51 @@
+OWASP Top 10 2021
+=================
+ID: A03:2021
+Vulnerability: Injection
+Meaning: User input is treated as code, not data.(XSS in our example)
+================================================================================================================================================================
+Phae1 --> ssti vuln was seen in the ZAP scan (4 photos in zap)
+================================================================================================================================================================
+File: frontend.js
+Route: http://localhost:5000/?message={{nunjucks evaluates}}
+
+vulnerable code:
+   const nunjucks = require('nunjucks')
+   const message = req.query.message || "Please log in to continue"
+   rendered = nunjucks.renderString(message);
+   res.render('user.html',{message : rendered});
+
+
+------------------------------------------------------------------------------------
+exploitation:
+http://localhost:5000/?message={{nunjucks evaluates}}       <---you could render any nunjucks evaluates to execute it on server side
+------------------------------------------------------------------------------------
+explanation:
+The application is vulnerable to both Reflected Cross-Site Scripting (XSS) and Server-Side Template Injection (SSTI). User-controlled input is passed directly to nunjucks.renderString() and rendered without sanitization. This allows attackers to execute arbitrary JavaScript in the browser and arbitrary commands on the server, leading to Remote Code Execution.
+
+------------------------------------------------------------------------------------
+rules:
+  - id: nunjucks-ssti-vulnerability
+    message: SSTI Detected
+    severity: CRITICAL
+    languages: [javascript]
+    pattern: 'nunjucks.renderString($VAR)'
+    where:
+      - $VAR.matches(/req\.(query|params|body)/)
+
+
+
+================================================================================================================================================================
+fix:
+instead of:
+   const nunjucks = require('nunjucks')
+   const message = req.query.message || "Please log in to continue"
+   rendered = nunjucks.renderString(message);
+   res.render('user.html',{message : rendered});
+
+use:
+   const message = req.query.message || "Please log in to continue"
+   const escapeHtml = require('escape-html');
+   res.render('user.html',{message: escapeHtml(message)});
+
+================================================================================================================================================================
