@@ -4,7 +4,7 @@ ID: A01:2021
 Vulnerability: Broken Access Control
 meaning:Users can access things they should NOT be allowed to access.(Path Traversal)
 ================================================================================================================================================================
-Phae1 --> http://localhost:5000/v1/beer-pic/?picture=../../../package.json (use this in postman and you will be able to control the files you get)
+Phase1 --> http://localhost:5000/v1/beer-pic/?picture=../../../package.json (use this in postman and you will be able to control the files you get)
 ================================================================================================================================================================
 File: order.js
 Route: /v1/beer-pic/

@@ -1,0 +1,7 @@
+rules:
+  - id: idor-client-controlled-id
+    patterns:
+      - pattern: req.query.id
+    message: "Client-controlled ID (Broken Access Control)"
+    severity: ERROR
+    languages: [javascript]

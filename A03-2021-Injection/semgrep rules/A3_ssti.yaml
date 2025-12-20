@@ -1,0 +1,6 @@
+rules:
+  - id: nunjucks-ssti-vulnerability
+    message: SSTI Detected
+    severity: CRITICAL
+    languages: [javascript]
+    pattern: 'nunjucks.renderString($VAR)'

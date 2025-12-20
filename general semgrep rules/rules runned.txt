@@ -1,0 +1,2 @@
+semgrep --config "p/javascript" --config "p/nodejs" &> semgrep_results
+semgrep --config p/default &> semgrep_rules_default

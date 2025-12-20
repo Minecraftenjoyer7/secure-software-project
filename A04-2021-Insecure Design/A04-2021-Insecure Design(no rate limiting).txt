@@ -55,7 +55,7 @@ use:
 const rateLimit = require('express-rate-limit');
 const searchLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, 
-  max: 10, 
+  max: 5, 
   message: { error: 'Too many search requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,

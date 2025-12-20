@@ -1,0 +1,8 @@
+rules:
+  - id: a05-verbose-errors
+    message: A05 - Verbose error messages
+    severity: MEDIUM
+    languages: [javascript]
+    pattern-either:
+      - pattern: 'res.send(... + $VAR + ...)'
+      - pattern: 'console.log(...)'

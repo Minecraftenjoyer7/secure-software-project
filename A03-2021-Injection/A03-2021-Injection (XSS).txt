@@ -4,7 +4,7 @@ ID: A03:2021
 Vulnerability: Injection
 Meaning: User input is treated as code, not data.(XSS in our example)
 ================================================================================================================================================================
-Phae1 --> xss vuln was seen in the ZAP scan (4 photos in zap)
+Phase1 --> xss vuln was seen in the ZAP scan (4 photos in zap)
 ================================================================================================================================================================
 File: frontend.js and auth-login-basic.html
 Route: http://localhost:5000/?message={js code}
@@ -32,8 +32,7 @@ rules:
     severity: HIGH
     languages: [javascript]
     pattern: 'res.render(..., {message: $INPUT})'
-    where:
-      - $INPUT.matches(/req\.|rendered/)
+
 
 
 

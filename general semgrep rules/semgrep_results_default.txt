@@ -1,0 +1,484 @@
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 109 files tracked by git with 1063 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin      Rules                                                                
+ ─────────────────────────────        ───────────────────                                                               
+  <multilang>      61     109          Community    1063                                                                
+  js              156      25                                                                                           
+  html              1       9                                                                                           
+  yaml             31       7                                                                                           
+  bash              4       7                                                                                           
+  json              4       3                                                                                           
+  dockerfile        6       1                                                                                           
+                                                                                                                        
+                    
+                    
+┌──────────────────┐
+│ 43 Code Findings │
+└──────────────────┘
+                                
+    find_vulnerable_endpoints.sh
+   ❯❯❱ generic.secrets.security.detected-jwt-token.detected-jwt-token
+          JWT token detected          
+          Details: https://sg.run/05N5
+                                      
+           22┆ TOKEN="eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpZCI6MSwicm9sZSI6ImFkbWluIn0."
+                                           
+    vuln-node.js-express.js-app/populate.sh
+   ❯❯❱ generic.secrets.security.detected-jwt-token.detected-jwt-token
+          JWT token detected          
+          Details: https://sg.run/05N5
+                                      
+           33┆ -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWlu
+               IiwiaWF0IjoxNjU5NDI3MjQwLCJleHAiOjE2NTk1MTM2NDB9.QpYD330lcw_AxJR16FKGWugQk0HNHRhOqonaH75GUD
+               E'                                                                                         
+                                                         
+    vuln-node.js-express.js-app/src/middleware/authJwt.js
+    ❯❱ javascript.jsonwebtoken.security.audit.jwt-decode-without-verify.jwt-decode-without-verify
+          Detected the decoding of a JWT token without a verify step. JWT tokens must be verified before use,
+          otherwise the token's integrity is unknown. This means a malicious actor could forge a JWT token   
+          with any claims. Call '.verify()' before using the token.                                          
+          Details: https://sg.run/J9YP                                                                       
+                                                                                                             
+           13┆   jwt.decode(token, (err, decoded) => {
+           14┆   if (err) {
+           15┆     return res.status(401).send({
+           16┆       message: "Unauthorized!"
+           17┆     });
+           18┆   }
+           19┆   req.userId = decoded.id;
+           20┆   next();
+           21┆ });
+                                                                      
+    vuln-node.js-express.js-app/src/router/routes/New Folder 1/user.js
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+           18┆ const user_object = jwt.verify(req.headers.authorization.split(' ')[1],"SuperSecret")
+   
+    ❯❱ javascript.jsonwebtoken.security.audit.jwt-decode-without-verify.jwt-decode-without-verify
+          Detected the decoding of a JWT token without a verify step. JWT tokens must be verified before use,
+          otherwise the token's integrity is unknown. This means a malicious actor could forge a JWT token   
+          with any claims. Call '.verify()' before using the token.                                          
+          Details: https://sg.run/J9YP                                                                       
+                                                                                                             
+          182┆ current_user_id = jwt.decode(req.headers.authorization.split(' ')[1]).id
+   
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+          259┆ var token = jwt.sign(payload, jwtTokenSecret, {
+   
+   ❯❯❱ javascript.express.security.express-wkhtml-injection.express-wkhtmltoimage-injection
+          If unverified user data can reach the `phantom` methods it can result in Server-Side Request Forgery
+          vulnerabilities                                                                                     
+          Details: https://sg.run/pxe0                                                                        
+                                                                                                              
+          409┆ const GeneratedToken = otplib.authenticator.generate(seed);
+   
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+          417┆ var jwttoken = jwt.sign(payload, jwtTokenSecret, {
+                                                                    
+    vuln-node.js-express.js-app/src/router/routes/New Folder/user.js
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+           18┆ const user_object = jwt.verify(req.headers.authorization.split(' ')[1],"SuperSecret")
+   
+    ❯❱ javascript.jsonwebtoken.security.audit.jwt-decode-without-verify.jwt-decode-without-verify
+          Detected the decoding of a JWT token without a verify step. JWT tokens must be verified before use,
+          otherwise the token's integrity is unknown. This means a malicious actor could forge a JWT token   
+          with any claims. Call '.verify()' before using the token.                                          
+          Details: https://sg.run/J9YP                                                                       
+                                                                                                             
+          182┆ current_user_id = jwt.decode(req.headers.authorization.split(' ')[1]).id
+   
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+          253┆ var token = jwt.sign(payload, jwtTokenSecret, {
+   
+   ❯❯❱ javascript.express.security.express-wkhtml-injection.express-wkhtmltoimage-injection
+          If unverified user data can reach the `phantom` methods it can result in Server-Side Request Forgery
+          vulnerabilities                                                                                     
+          Details: https://sg.run/pxe0                                                                        
+                                                                                                              
+          398┆ const GeneratedToken = otplib.authenticator.generate(seed);
+   
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+          406┆ var jwttoken = jwt.sign(payload, jwtTokenSecret, {
+                                                          
+    vuln-node.js-express.js-app/src/router/routes/admin.js
+    ❯❱ javascript.express.security.audit.express-libxml-vm-noent.express-libxml-vm-noent
+          Detected use of parseXml() function with the `noent` field set to `true`. This can lead to an XML
+          External Entities (XXE) attack if untrusted data is passed into it.                              
+          Details: https://sg.run/n8Ag                                                                     
+                                                                                                           
+           93┆ const doc = libxmljs.parseXml(xml, {noent: true});
+                                                             
+    vuln-node.js-express.js-app/src/router/routes/frontend.js
+    ❯❱ javascript.express.security.express-insecure-template-usage.express-insecure-template-usage
+          User data from `req` is being compiled into the template, which can lead to a Server Side Template
+          Injection (SSTI) vulnerability.                                                                   
+          Details: https://sg.run/b49v                                                                      
+                                                                                                            
+           18┆ rendered = nunjucks.renderString(message);
+            ⋮┆----------------------------------------
+           43┆ rendered = nunjucks.renderString(message);
+                                                          
+    vuln-node.js-express.js-app/src/router/routes/order.js
+    ❯❱ javascript.express.security.audit.express-path-join-resolve-traversal.express-path-join-resolve-traversal
+          Possible writing outside of the destination, make sure that the target path is nested in the
+          intended destination                                                                        
+          Details: https://sg.run/weRn                                                                
+                                                                                                      
+           33┆ fs.readFile(path.join(__dirname, filePath),function(err,data){
+   
+    ❯❱ javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal
+          Detected possible user input going into a `path.join` or `path.resolve` function. This could   
+          possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files
+          stored in the file system. Instead, be sure to sanitize or validate user input first.          
+          Details: https://sg.run/OPqk                                                                   
+                                                                                                         
+           33┆ fs.readFile(path.join(__dirname, filePath),function(err,data){
+   
+   ❯❯❱ javascript.sequelize.security.audit.sequelize-injection-express.express-sequelize-injection
+          Detected a sequelize statement that is tainted by user-input. This could lead to SQL injection if   
+          the variable is user-controlled and is not properly sanitized. In order to prevent SQL injection, it
+          is recommended to use parameterized queries or prepared statements.                                 
+          Details: https://sg.run/gjoe                                                                        
+                                                                                                              
+           71┆ const beers = db.sequelize.query(sql, { type: 'RAW' }).then(beers => {
+                                                           
+    vuln-node.js-express.js-app/src/router/routes/system.js
+    ❯❱ javascript.express.security.audit.xss.direct-response-write.direct-response-write
+          Detected directly writing to a Response object from user-defined input. This bypasses any HTML      
+          escaping and may expose your application to a Cross-Site-scripting (XSS) vulnerability. Instead, use
+          'resp.render()' to render safely escaped HTML.                                                      
+          Details: https://sg.run/vzGl                                                                        
+                                                                                                              
+           18┆ res.send(test)
+   
+    ❯❱ javascript.express.security.audit.express-open-redirect.express-open-redirect
+          The application redirects to a URL specified by user-supplied input `req` that is not validated.   
+          This could redirect users to malicious locations. Consider using an allow-list approach to validate
+          URLs, or warn users they are being redirected to a third-party website.                            
+          Details: https://sg.run/EpoP                                                                       
+                                                                                                             
+           37┆ res.redirect(url);
+   
+    ❯❱ javascript.express.security.audit.express-third-party-object-deserialization.express-third-party-object-
+       deserialization                                                                                         
+          The following function call serialize.unserialize accepts user controlled data which can result in
+          Remote Code Execution (RCE) through Object Deserialization. It is recommended to use secure data  
+          processing alternatives such as JSON.parse() and Buffer.from().                                   
+          Details: https://sg.run/8W5j                                                                      
+                                                                                                            
+           64┆ var deser = serialize.unserialize(body)
+                                                         
+    vuln-node.js-express.js-app/src/router/routes/user.js
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+           18┆ const user_object = jwt.verify(req.headers.authorization.split(' ')[1],"SuperSecret")
+   
+    ❯❱ javascript.jsonwebtoken.security.audit.jwt-decode-without-verify.jwt-decode-without-verify
+          Detected the decoding of a JWT token without a verify step. JWT tokens must be verified before use,
+          otherwise the token's integrity is unknown. This means a malicious actor could forge a JWT token   
+          with any claims. Call '.verify()' before using the token.                                          
+          Details: https://sg.run/J9YP                                                                       
+                                                                                                             
+          182┆ current_user_id = jwt.decode(req.headers.authorization.split(' ')[1]).id
+   
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+          259┆ var token = jwt.sign(payload, jwtTokenSecret, {
+   
+   ❯❯❱ javascript.express.security.express-wkhtml-injection.express-wkhtmltoimage-injection
+          If unverified user data can reach the `phantom` methods it can result in Server-Side Request Forgery
+          vulnerabilities                                                                                     
+          Details: https://sg.run/pxe0                                                                        
+                                                                                                              
+          409┆ const GeneratedToken = otplib.authenticator.generate(seed);
+   
+    ❯❱ javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/4xN9                                                                       
+                                                                                                             
+          417┆ var jwttoken = jwt.sign(payload, jwtTokenSecret, {
+                                             
+    vuln-node.js-express.js-app/src/server.js
+     ❱ javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage
+          A CSRF middleware was not detected in your express application. Ensure you are either using one such
+          as `csurf` or `csrf` (see rule references) and/or you are properly doing CSRF validation in your    
+          routes with a token or cookies.                                                                     
+          Details: https://sg.run/BxzR                                                                        
+                                                                                                              
+           17┆ const app = express()
+   
+    ❯❱ javascript.express.security.audit.express-cookie-settings.express-cookie-session-no-domain
+          Default session middleware settings: `domain` not set. It indicates the domain of the cookie; use it
+          to compare against the domain of the server in which the URL is being requested. If they match, then
+          check the path attribute next.                                                                      
+          Details: https://sg.run/rd41                                                                        
+                                                                                                              
+           45┆ app.use(session({
+           46┆   genid:function(req){
+           47┆     if ( (req.session) && (req.session.uid) ) {
+           48┆       return req.session.uid + "_" + 123;
+           49┆       //    return new Date().getTime().toString();
+           50┆
+           51┆     } else {
+           52┆       return new Date().getTime().toString();
+           53┆     }
+           54┆   },
+             [hid 9 additional lines, adjust with --max-lines-per-finding] 
+   
+    ❯❱ javascript.express.security.audit.express-cookie-settings.express-cookie-session-no-expires
+          Default session middleware settings: `expires` not set. Use it to set expiration date for persistent
+          cookies.                                                                                            
+          Details: https://sg.run/N4eG                                                                        
+                                                                                                              
+           45┆ app.use(session({
+           46┆   genid:function(req){
+           47┆     if ( (req.session) && (req.session.uid) ) {
+           48┆       return req.session.uid + "_" + 123;
+           49┆       //    return new Date().getTime().toString();
+           50┆
+           51┆     } else {
+           52┆       return new Date().getTime().toString();
+           53┆     }
+           54┆   },
+             [hid 9 additional lines, adjust with --max-lines-per-finding] 
+   
+    ❯❱ javascript.express.security.audit.express-cookie-settings.express-cookie-session-no-httponly
+          Default session middleware settings: `httpOnly` not set. It ensures the cookie is sent only over
+          HTTP(S), not client JavaScript, helping to protect against cross-site scripting attacks.        
+          Details: https://sg.run/ydBO                                                                    
+                                                                                                          
+           45┆ app.use(session({
+           46┆   genid:function(req){
+           47┆     if ( (req.session) && (req.session.uid) ) {
+           48┆       return req.session.uid + "_" + 123;
+           49┆       //    return new Date().getTime().toString();
+           50┆
+           51┆     } else {
+           52┆       return new Date().getTime().toString();
+           53┆     }
+           54┆   },
+             [hid 9 additional lines, adjust with --max-lines-per-finding] 
+   
+    ❯❱ javascript.express.security.audit.express-cookie-settings.express-cookie-session-no-path
+          Default session middleware settings: `path` not set. It indicates the path of the cookie; use it to
+          compare against the request path. If this and domain match, then send the cookie in the request.   
+          Details: https://sg.run/b7pd                                                                       
+                                                                                                             
+           45┆ app.use(session({
+           46┆   genid:function(req){
+           47┆     if ( (req.session) && (req.session.uid) ) {
+           48┆       return req.session.uid + "_" + 123;
+           49┆       //    return new Date().getTime().toString();
+           50┆
+           51┆     } else {
+           52┆       return new Date().getTime().toString();
+           53┆     }
+           54┆   },
+             [hid 9 additional lines, adjust with --max-lines-per-finding] 
+   
+    ❯❱ javascript.express.security.audit.express-cookie-settings.express-cookie-session-no-secure
+          Default session middleware settings: `secure` not set. It ensures the browser only sends the cookie
+          over HTTPS.                                                                                        
+          Details: https://sg.run/9oKz                                                                       
+                                                                                                             
+           45┆ app.use(session({
+           46┆   genid:function(req){
+           47┆     if ( (req.session) && (req.session.uid) ) {
+           48┆       return req.session.uid + "_" + 123;
+           49┆       //    return new Date().getTime().toString();
+           50┆
+           51┆     } else {
+           52┆       return new Date().getTime().toString();
+           53┆     }
+           54┆   },
+             [hid 9 additional lines, adjust with --max-lines-per-finding] 
+   
+    ❯❱ javascript.express.security.audit.express-session-hardcoded-secret.express-session-hardcoded-secret
+          A hard-coded credential was detected. It is not recommended to store credentials in source-code, as
+          this risks secrets being leaked and used by either an internal or external malicious adversary. It 
+          is recommended to use environment variables to securely provide credentials or retrieve credentials
+          from a secure vault or HSM (Hardware Security Module).                                             
+          Details: https://sg.run/LYvG                                                                       
+                                                                                                             
+           59┆ secret: 'SuperSecret',
+                                                                   
+    vuln-node.js-express.js-app/src/templates/auth-login-basic.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          225┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                                      
+    vuln-node.js-express.js-app/src/templates/auth-register-basic.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          226┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                       
+    vuln-node.js-express.js-app/src/templates/beer.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          272┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                              
+    vuln-node.js-express.js-app/src/templates/cards-basic.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          1270┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                                       
+    vuln-node.js-express.js-app/src/templates/layouts-without-menu.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          266┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                          
+    vuln-node.js-express.js-app/src/templates/profile.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          280┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                              
+    vuln-node.js-express.js-app/src/templates/ui-carousel.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          747┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                                
+    vuln-node.js-express.js-app/src/templates/user-register.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          252┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                                                       
+    vuln-node.js-express.js-app/src/templates/user.html
+    ❯❱ html.security.audit.missing-integrity.missing-integrity
+          This tag is missing an 'integrity' subresource integrity attribute. The 'integrity' attribute allows
+          for the browser to verify that externally hosted files (for example from a CDN) are delivered       
+          without unexpected manipulation. Without this attribute, if an attacker can modify the externally   
+          hosted resource, this could lead to XSS and other types of attacks. To prevent this, include the    
+          base64-encoded cryptographic hash of the resource (file) you’re telling the browser to fetch in the 
+          'integrity' attribute for all externally hosted files.                                              
+          Details: https://sg.run/krXA                                                                        
+                                                                                                              
+          225┆ <script async defer src="https://buttons.github.io/buttons.js"></script>
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 43 (43 blocking)
+ • Rules run: 259
+ • Targets scanned: 109
+ • Parsed lines: ~99.9%
+ • Scan skipped: 
+   ◦ Files matching .semgrepignore patterns: 395
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 259 rules on 109 files: 43 findings.
+
+A new version of Semgrep is available. See https://semgrep.dev/docs/upgrading
+
+📢 Too many findings? Try Semgrep Pro for more powerful queries and less noise.
+   See https://sg.run/false-positives.
+

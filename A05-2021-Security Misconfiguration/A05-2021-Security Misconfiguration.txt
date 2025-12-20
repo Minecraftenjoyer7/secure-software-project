@@ -1,0 +1,61 @@
+OWASP Top 10 2021
+=================
+ID: A05:2021
+Vulnerability: Security Misconfiguration
+meaning: Security features exist but are configured badly.(Verbose error messages in our example)
+================================================================================================================================================================
+File:frontend.js and order.js
+Route: multiple routes
+/
+/registerform
+/login
+/v1/search/:filter/:query
+
+vulnerable code:
+     >in frontend.js:
+	console.log(req.session);
+	console.log(userEmail)                     
+	console.log(emailExpression.test(userEmail)) 
+	console.log(req.query.message)             
+	console.log(e)  
+     >in order.js:
+	res.status(501).send("error, query failed: "+err)  
+------------------------------------------------------------------------------------
+exploitation:
+http://localhost:5000/v1/search/invalid_column/1   <-- using postman you could trigger an (error, query failed: SequelizeDatabaseError: SQLITE_ERROR: no such column: invalid_column)
+
+------------------------------------------------------------------------------------
+explanation:
+The application exposes excessive debug and error information in several places. Internal session data, exception details, database errors, and system-level failures are logged or displayed without proper restriction, which could reveal sensitive information about the application’s internal behavior.
+
+------------------------------------------------------------------------------------
+rules:
+  - id: a05-verbose-errors
+    message: A05 - Verbose error messages
+    severity: MEDIUM
+    languages: [javascript]
+    pattern-either:
+      - pattern: 'res.send(... + $VAR + ...)'
+      - pattern: 'console.log(...)'
+
+
+================================================================================================================================================================
+fix:
+instead of:
+   console.log(req.session);
+   console.log(userEmail)                     
+   console.log(emailExpression.test(userEmail))  
+   console.log(req.query.message)             
+   console.log(e)  
+use:
+   Debug logging such as console.log() should be strictly limited to development and testing phases. All debug statements that expose session data, user input,
+   credentials, or internal application state must be removed before deploying the application to production. Leaving such logs in production can leak
+   sensitive information and assist attackers during reconnaissance.
+------------------------------------------------------------------------------------------------------
+fix:
+instead of:
+	res.status(501).send("error, query failed: "+err)
+use:
+	res.status(500).json({error: "An error occurred processing your request"})
+
+================================================================================================================================================================

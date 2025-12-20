@@ -1,0 +1,6 @@
+rules:
+  - id: xss-vuln
+    message: "XSS: User input in template without escaping"
+    severity: HIGH
+    languages: [javascript]
+    pattern: 'res.render(..., {message: $INPUT})'

@@ -2,7 +2,7 @@ OWASP Top 10 2021
 =================
 ID: A01:2021
 Vulnerability: Broken Access Control
-Meaning: Users can access things they should NOT be allowed to access.
+Meaning: Users can access things they should NOT be allowed to access.(client-controlled identifier)
 ================================================================================================================================================================
 File: router/routes/frontend.js
 Route: http://localhost:5000/profile?id={number}
@@ -106,13 +106,11 @@ instead of:(in frontend.js)
 use:
 app.get('/profile', async (req, res) => {
 
-    // ✅ Enforce authentication
     if (!req.session.logged || !req.session.userId) {
         return res.redirect('/?message=Please log in');
     }
 
     try {
-        // ✅ Server-side identity (NO client control)
         if (!req.session.logged || !req.session.userId) {
     		return res.redirect('/?message=Please log in');
 	}
@@ -126,7 +124,6 @@ app.get('/profile', async (req, res) => {
             return res.redirect('/?message=User not found');
         }
 
-        // ✅ Fetch beers like before
         const beers = await db.beer.findAll();
 
         res.render('profile.html', {
@@ -154,7 +151,6 @@ if(user[0].password === md5(userPassword)){
 use:
 if(user[0].password === md5(userPassword)){
 	req.session.logged = true;	
-	// ✅ FIX: store user identity in session
 	req.session.userId = user[0].id;
 	res.redirect('/profile');
 	return;

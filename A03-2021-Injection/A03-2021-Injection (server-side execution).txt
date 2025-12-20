@@ -2,9 +2,9 @@ OWASP Top 10 2021
 =================
 ID: A03:2021
 Vulnerability: Injection
-Meaning: User input is treated as code, not data.(XSS in our example)
+Meaning: User input is treated as code, not data.(SSTI in our example)
 ================================================================================================================================================================
-Phae1 --> ssti vuln was seen in the ZAP scan (4 photos in zap)
+Phase1 --> ssti vuln was seen in the ZAP scan (4 photos in zap)
 ================================================================================================================================================================
 File: frontend.js
 Route: http://localhost:5000/?message={{nunjucks evaluates}}

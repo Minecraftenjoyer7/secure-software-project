@@ -1,0 +1,7 @@
+rules:
+  - id: md5-password
+    patterns:
+      - pattern: md5($X)
+    message: "Insecure cryptographic algorithm detected (MD5)"
+    severity: ERROR
+    languages: [javascript]

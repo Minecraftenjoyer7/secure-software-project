@@ -1,0 +1,7 @@
+rules:
+  - id: any-fs-read-with-user-input
+    message: File read with user input - Path Traversal risk
+    severity: ERROR
+    languages: [javascript]
+    pattern: |
+      fs.readFile($PATH, ...)
